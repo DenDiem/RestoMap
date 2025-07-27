@@ -5,7 +5,7 @@ import { AuthorizeInterceptor } from './authorize.interceptor';
 describe('AuthorizeInterceptor', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [AuthorizeInterceptor]
+      providers: [AuthorizeInterceptor],
     });
   });
 

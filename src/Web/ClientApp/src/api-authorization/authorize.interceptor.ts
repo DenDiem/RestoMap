@@ -1,10 +1,17 @@
 import { Inject, Injectable } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import {
+  HttpInterceptor,
+  HttpRequest,
+  HttpHandler,
+  HttpEvent,
+  HttpErrorResponse,
+  HttpResponse,
+} from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthorizeInterceptor implements HttpInterceptor {
   loginUrl: string;
@@ -22,11 +29,13 @@ export class AuthorizeInterceptor implements HttpInterceptor {
         return throwError(() => error);
       }),
       // HACK: As of .NET 8 preview 5, some non-error responses still need to be redirected to login page.
-      map((event: HttpEvent<any>) => {2
+      map((event: HttpEvent<any>) => {
+        2;
         if (event instanceof HttpResponse && event.url?.startsWith(this.loginUrl)) {
           window.location.href = `${this.loginUrl}?ReturnUrl=${window.location.pathname}`;
         }
         return event;
-      }));
+      })
+    );
   }
 }
