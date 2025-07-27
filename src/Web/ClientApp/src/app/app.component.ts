@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'res-root',
-  template: '',
+  template: '<h1>Hello World</h1>',
 })
 export class AppComponent {
 }
