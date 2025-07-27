@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'res-root',
-  template: '',
+  template: 's',
 })
 export class AppComponent {
 }
