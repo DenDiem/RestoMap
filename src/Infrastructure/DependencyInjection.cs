@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static class DependencyInjection
@@ -24,7 +23,7 @@ public static class DependencyInjection
         builder.Services.AddDbContext<ApplicationDbContext>((sp, options) =>
         {
             options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
-            options.UseSqlServer(connectionString);
+            options.UseNpgsql(connectionString);
         });
 
 
@@ -42,5 +41,20 @@ public static class DependencyInjection
 
         builder.Services.AddAuthorization(options =>
             options.AddPolicy(Policies.CanPurge, policy => policy.RequireRole(Roles.Administrator)));
+
+        // Add Redis distributed cache
+        var redisConnectionString = builder.Configuration.GetConnectionString("Redis");
+        if (!string.IsNullOrEmpty(redisConnectionString))
+        {
+            builder.Services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = redisConnectionString;
+            });
+        }
+        else
+        {
+            // Fallback to in-memory cache if Redis is not configured
+            builder.Services.AddMemoryCache();
+        }
     }
 }
