@@ -1,71 +1,203 @@
 ﻿# RestoMap
 
-The project was generated using the [Clean.Architecture.Solution.Template](https://github.com/jasontaylordev/CleanArchitecture) version 9.0.11.
+**RestoMap** - це веб-додаток для пошуку і управління ресторанами, побудований на основі Clean Architecture з використанням .NET 9 та Angular.
 
-## Build
+## 🏗️ Архітектура
 
-Run `dotnet build -tl` to build the solution.
+Проект використовує **Clean Architecture** підхід і складається з наступних шарів:
 
-## Run
+- **Domain** - доменні сутності, value objects та бізнес-правила
+- **Application** - команди, запити, обробники та інтерфейси
+- **Infrastructure** - реалізація інтерфейсів, доступ до даних, зовнішні сервіси
+- **Web** - API контролери, ендпоінти та Angular клієнт
 
-To run the web application:
+## 🛠️ Технології
+
+- **.NET 9** - Backend API
+- **Angular 18** - Frontend SPA
+- **PostgreSQL** - Основна база даних
+- **Redis** - Кешування
+- **Entity Framework Core** - ORM
+- **MediatR** - CQRS паттерн
+- **Docker** - Контейнеризація
+
+## 🚀 Швидкий старт
+
+### Опція 1: Локальна розробка (рекомендовано)
+
+1. **Запустити тільки сервіси в Docker:**
+```bash
+make dev-services  # або docker-compose up -d postgres redis
+```
+
+2. **Встановити залежності:**
+```bash
+make dev-setup  # або dotnet restore + npm install
+```
+
+3. **Запустити додаток:**
+```bash
+make run  # або cd src/Web && dotnet watch run
+```
+
+Додаток буде доступний за адресою: https://localhost:5001
+
+### Опція 2: Повний Docker (для тестування продакшену)
 
 ```bash
-cd .\src\Web\
-dotnet watch run
+make docker-up-build  # або docker-compose up -d --build
 ```
 
-Navigate to https://localhost:5001. The application will automatically reload if you change any of the source files.
+Додаток буде доступний за адресою: http://localhost:8080
 
-## Code Styles & Formatting
+## 🐳 Docker для розробки
 
-The template includes [EditorConfig](https://editorconfig.org/) support to help maintain consistent coding styles for multiple developers working on the same project across various editors and IDEs. The **.editorconfig** file defines the coding styles applicable to this solution.
+### Чи потрібно використовувати Docker для розробки?
 
-## Code Scaffolding
+**Рекомендація:** Використовуйте **гібридний підхід**:
+- ✅ **PostgreSQL та Redis в Docker** - для швидкого налаштування без встановлення локально
+- ✅ **.NET додаток локально** - для hot reload, дебагінгу та швидшої розробки
+- ✅ **Angular локально** - для live reload та кращого dev experience
 
-The template includes support to scaffold new commands and queries.
+### Команди для роботи з Docker:
 
-Start in the `.\src\Application\` folder.
+```bash
+# Розробка (тільки сервіси)
+make dev-services        # Запустити PostgreSQL + Redis
+make dev-stop-services   # Зупинити сервіси
 
-Create a new command:
-
+# Повний Docker (продакшн-подібний)
+make docker-up-build     # Побудувати і запустити все
+make docker-logs         # Переглянути логи
+make docker-down         # Зупинити все
 ```
+
+## 👨‍💻 Флоу розробника: Додавання нового ендпоінту
+
+### 1. Створити структуру в Application шарі
+
+```bash
+# Використати генератор коду
+make generate-usecase NAME=CreateRestaurant FEATURE=Restaurants TYPE=command RETURN=int
+
+# Або створити вручну в src/Application/Restaurants/Commands/CreateRestaurant/
+```
+
+### 2. Реалізувати Command/Query
+
+```csharp
+// CreateRestaurant.cs
+public record CreateRestaurantCommand : IRequest<int>
+{
+    public string Name { get; init; } = null!;
+    public string Address { get; init; } = null!;
+}
+
+public class CreateRestaurantCommandHandler : IRequestHandler<CreateRestaurantCommand, int>
+{
+    // Реалізація...
+}
+```
+
+### 3. Додати валідатор (опціонально)
+
+```csharp
+// CreateRestaurantCommandValidator.cs
+public class CreateRestaurantCommandValidator : AbstractValidator<CreateRestaurantCommand>
+{
+    public CreateRestaurantCommandValidator()
+    {
+        RuleFor(v => v.Name).NotEmpty().MaximumLength(200);
+    }
+}
+```
+
+### 4. Створити ендпоінт групу
+
+```csharp
+// src/Web/Endpoints/Restaurants.cs
+public class Restaurants : EndpointGroupBase
+{
+    public override void Map(WebApplication app)
+    {
+        app.MapGroup(this)
+            .RequireAuthorization()
+            .MapPost(CreateRestaurant);
+    }
+
+    public async Task<Created<int>> CreateRestaurant(ISender sender, CreateRestaurantCommand command)
+    {
+        var id = await sender.Send(command);
+        return TypedResults.Created($"/{nameof(Restaurants)}/{id}", id);
+    }
+}
+```
+
+### 5. Перевірити результат
+
+```bash
+make run                 # Запустити додаток
+# Перейти на https://localhost:5001/api для перегляду Swagger
+```
+
+## 🧪 Тестування
+
+```bash
+make test              # Всі тести крім acceptance
+make test-unit         # Юніт тести
+make test-integration  # Інтеграційні тести
+make test-acceptance   # Acceptance тести (потребує запущений додаток)
+```
+
+## 🗄️ База даних
+
+```bash
+make db-migration NAME=AddRestaurantTable  # Створити міграцію
+make db-update                            # Застосувати міграції
+make db-drop                              # Видалити базу данних
+```
+
+## 🔧 Корисні команди
+
+```bash
+make help          # Показати всі доступні команди
+make build         # Побудувати рішення
+make clean         # Очистити артефакти збірки
+make format        # Форматувати код
+make restore       # Відновити пакети
+```
+
+## 📝 Code Scaffolding
+
+Проект підтримує автоматичну генерацію коду:
+
+```bash
+# Створити команду
 dotnet new ca-usecase --name CreateTodoList --feature-name TodoLists --usecase-type command --return-type int
-```
 
-Create a new query:
-
-```
+# Створити запит
 dotnet new ca-usecase -n GetTodos -fn TodoLists -ut query -rt TodosVm
 ```
 
-If you encounter the error *"No templates or subcommands found matching: 'ca-usecase'."*, install the template and try again:
+## 🌐 API документація
 
-```bash
-dotnet new install Clean.Architecture.Solution.Template::9.0.11
-```
+Swagger UI доступний за адресою: `/api` в режимі розробки.
 
-## Test
+## 🏃‍♂️ Швидкий розвиток
 
-The solution contains unit, integration, functional, and acceptance tests.
+1. **Старт:** `make dev-start` - налаштує все необхідне
+2. **Розробка:** `make run` - запустить додаток з hot reload
+3. **Тестування:** `make test` - запустить тести
+4. **Продакшн тест:** `make prod-test` - протестує Docker збірку
 
-To run the unit, integration, and functional tests (excluding acceptance tests):
-```bash
-dotnet test --filter "FullyQualifiedName!~AcceptanceTests"
-```
+## 🤝 Contributing
 
-To run the acceptance tests, first start the application:
+1. Створіть feature branch від `main`
+2. Реалізуйте зміни, дотримуючись Clean Architecture принципів
+3. Додайте тести для нового функціоналу
+4. Переконайтеся, що `make test` проходить успішно
+5. Створіть Pull Request
 
-```bash
-cd .\src\Web\
-dotnet run
-```
+---
 
-Then, in a new console, run the tests:
-```bash
-cd .\src\Web\
-dotnet test
-```
-
-## Help
-To learn more about the template go to the [project website](https://github.com/jasontaylordev/CleanArchitecture). Here you can find additional guidance, request new features, report a bug, and discuss the template with other users.
+**Примітка:** Цей проект базується на [Clean.Architecture.Solution.Template](https://github.com/jasontaylordev/CleanArchitecture) версії 9.0.11.

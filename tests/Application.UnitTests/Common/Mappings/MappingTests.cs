@@ -2,9 +2,7 @@
 using System.Runtime.CompilerServices;
 using AutoMapper;
 using RestoMap.Application.Common.Interfaces;
-using RestoMap.Application.Common.Models;
-using RestoMap.Application.TodoItems.Queries.GetTodoItemsWithPagination;
-using RestoMap.Application.TodoLists.Queries.GetTodos;
+using RestoMap.Application.Restaurants.Queries.GetRestaurants;
 using RestoMap.Domain.Entities;
 using NUnit.Framework;
 
@@ -30,11 +28,8 @@ public class MappingTests
     }
 
     [Test]
-    [TestCase(typeof(TodoList), typeof(TodoListDto))]
-    [TestCase(typeof(TodoItem), typeof(TodoItemDto))]
-    [TestCase(typeof(TodoList), typeof(LookupDto))]
-    [TestCase(typeof(TodoItem), typeof(LookupDto))]
-    [TestCase(typeof(TodoItem), typeof(TodoItemBriefDto))]
+    [TestCase(typeof(City), typeof(CityDto))]
+    [TestCase(typeof(Restaurant), typeof(RestaurantDto))]
     public void ShouldSupportMappingFromSourceToDestination(Type source, Type destination)
     {
         var instance = GetInstanceOf(source);

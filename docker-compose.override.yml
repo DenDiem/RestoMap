@@ -1,0 +1,42 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      target: dev
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_HTTP_PORTS=8080
+    ports:
+      - "5000:8080"
+    develop:
+      watch:
+        # Sync .NET source code changes
+        - action: sync
+          path: ./src
+          target: /src/src
+          ignore:
+            - "**/bin/"
+            - "**/obj/"
+            - "**/.vs/"
+            - "**/*.user"
+            - "**/node_modules/"
+        # Sync Angular client app changes
+        - action: sync
+          path: ./src/Web/ClientApp/src
+          target: /src/src/Web/ClientApp/src
+          ignore:
+            - "**/*.spec.ts"
+            - "**/node_modules/"
+        # Rebuild when project files change
+        - action: rebuild
+          path: ./src/**/*.csproj
+        # Rebuild when package configuration changes
+        - action: rebuild
+          path: ./Directory.Build.props
+        - action: rebuild
+          path: ./Directory.Packages.props
+        # Rebuild when Angular package.json changes
+        - action: rebuild
+          path: ./src/Web/ClientApp/package.json 

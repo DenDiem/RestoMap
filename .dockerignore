@@ -1,0 +1,73 @@
+# Git
+.git
+.gitignore
+.gitattributes
+*.md
+
+# Visual Studio
+.vs
+.vscode
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build results
+**/bin/
+**/obj/
+**/out/
+**/TestResults/
+
+# NuGet
+packages/
+*.nupkg
+*.snupkg
+
+# Node.js (Angular)
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Angular build output
+**/dist/
+**/dist-server/
+
+# Azure
+infra/
+azure.yaml
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Tests
+tests/
+
+# Logs
+logs/
+*.log
+
+# Runtime files
+*.pid
+*.seed
+*.pid.lock
+
+# OS generated files
+Thumbs.db
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# IDE
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp 
