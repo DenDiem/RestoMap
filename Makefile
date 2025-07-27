@@ -115,4 +115,19 @@ dev-start: dev-services dev-setup ## Setup and start development environment
 # Production-like testing
 prod-test: docker-up-build ## Test production build with Docker
 	@echo "🚀 Production test environment started"
-	@echo "Application available at http://localhost:8080" 
+	@echo "Application available at http://localhost:8080"
+
+# Diagnostic commands
+docker-status: ## Check status of Docker services
+	docker-compose ps
+
+docker-logs-postgres: ## Show PostgreSQL logs
+	docker-compose logs postgres
+
+docker-connect-postgres: ## Connect to PostgreSQL database
+	docker exec -it restomap-postgres psql -U restomap -d RestoMapDb
+
+# PostgreSQL only setup
+check-postgres: ## Check if PostgreSQL is ready
+	@echo "Checking PostgreSQL connection..."
+	docker exec restomap-postgres pg_isready -U restomap -d RestoMapDb || echo "PostgreSQL not ready - run 'make dev-services' first" 

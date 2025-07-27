@@ -1,0 +1,41 @@
+# Development Dockerfile optimized for Docker Compose watch
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS dev
+
+# Install Node.js (required for Angular client build)
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs
+
+WORKDIR /src
+
+# Copy project files for dependency restoration
+COPY ["src/Web/Web.csproj", "src/Web/"]
+COPY ["src/Application/Application.csproj", "src/Application/"]
+COPY ["src/Domain/Domain.csproj", "src/Domain/"]
+COPY ["src/Infrastructure/Infrastructure.csproj", "src/Infrastructure/"]
+COPY ["Directory.Build.props", "./"]
+COPY ["Directory.Packages.props", "./"]
+COPY ["global.json", "./"]
+
+# Restore .NET dependencies
+RUN dotnet restore "src/Web/Web.csproj"
+
+# Copy package.json for Angular dependencies
+COPY ["src/Web/ClientApp/package*.json", "src/Web/ClientApp/"]
+WORKDIR /src/src/Web/ClientApp
+RUN npm ci
+
+# Copy all source code
+WORKDIR /src
+COPY . .
+
+# Create a non-root user with proper permissions
+RUN adduser --disabled-password --gecos '' --shell /bin/bash --home /home/dotnetuser dotnetuser
+RUN chown -R dotnetuser:dotnetuser /src
+USER dotnetuser
+
+WORKDIR /src/src/Web
+
+EXPOSE 8080
+
+# Use dotnet watch for hot reload in development
+ENTRYPOINT ["dotnet", "watch", "run", "--non-interactive", "--urls", "http://0.0.0.0:8080"] 
