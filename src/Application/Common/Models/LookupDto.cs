@@ -1,6 +1,4 @@
-﻿using RestoMap.Domain.Entities;
-
-namespace RestoMap.Application.Common.Models;
+﻿namespace RestoMap.Application.Common.Models;
 
 public class LookupDto
 {
@@ -12,8 +10,7 @@ public class LookupDto
     {
         public Mapping()
         {
-            CreateMap<TodoList, LookupDto>();
-            CreateMap<TodoItem, LookupDto>();
+            // No mappings needed for this generic DTO currently
         }
     }
 }
