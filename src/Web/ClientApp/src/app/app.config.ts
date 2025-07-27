@@ -1,8 +1,8 @@
 import { provideHttpClient, withInterceptors } from "@angular/common/http";
 import { APP_ID, ApplicationConfig, InjectionToken, provideExperimentalZonelessChangeDetection } from "@angular/core";
-import { authorizeInterceptor } from "./shared/interceptors/authorize.interceptor";
 import { provideRouter } from "@angular/router";
-import { APP_ROUTES } from "./app.routes";
+import { APP_ROUTES } from "@app/app.routes";
+import { authorizeInterceptor } from "@app/shared/interceptors/authorize.interceptor";
 import { provideStore } from '@ngrx/store';
 
 export const BASE_URL = new InjectionToken<string>('BASE_URL');

@@ -16,7 +16,27 @@
     "target": "es2022",
     "module": "es2020",
     "lib": ["es2018", "dom"],
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "paths": {
+      "@app/*": ["src/app/*"],
+      "@shared/*": ["src/app/shared/*"],
+      "@pages/*": ["src/app/pages/*"],
+      "@store/*": ["src/app/store/*"],
+      "@components/*": ["src/app/shared/components/*"],
+      "@services/*": ["src/app/shared/services/*"],
+      "@entities/*": ["src/app/shared/entities/*"],
+      "@guards/*": ["src/app/shared/guards/*"],
+      "@interceptors/*": ["src/app/shared/interceptors/*"],
+      "@pipes/*": ["src/app/shared/pipes/*"],
+      "@providers/*": ["src/app/shared/providers/*"],
+      "@validators/*": ["src/app/shared/validators/*"],
+      "@helpers/*": ["src/app/shared/helpers/*"],
+      "@directives/*": ["src/app/shared/directives/*"],
+      "@animations/*": ["src/app/shared/animations/*"],
+      "@tokens/*": ["src/app/shared/tokens/*"],
+      "@environments/*": ["src/environments/*"],
+      "@assets/*": ["src/assets/*"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

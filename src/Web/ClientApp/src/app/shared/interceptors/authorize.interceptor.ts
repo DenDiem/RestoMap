@@ -1,12 +1,12 @@
-import { inject} from '@angular/core';
 import {
   HttpErrorResponse,
-  HttpResponse,
   HttpInterceptorFn,
+  HttpResponse,
 } from '@angular/common/http';
+import { inject} from '@angular/core';
+import { BASE_URL } from '@app/app.config';
 import { throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { BASE_URL } from '../../app.config';
 
 export const authorizeInterceptor: HttpInterceptorFn = (req, next) => {
   const baseUrl = inject(BASE_URL);
